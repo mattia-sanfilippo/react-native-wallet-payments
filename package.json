@@ -1,6 +1,6 @@
 {
   "name": "react-native-wallet-payments",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Use wallet-based payments in your React Native app",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
