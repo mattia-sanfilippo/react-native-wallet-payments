@@ -11,10 +11,28 @@ class WalletPaymentsModule(reactContext: ReactApplicationContext) :
     return NAME
   }
 
-  // Example method
-  // See https://reactnative.dev/docs/native-modules-android
-  override fun multiply(a: Double, b: Double): Double {
-    return a * b
+  override fun canMakePayments(promise: Promise) {
+    promise.resolve(false)
+  }
+
+  override fun showPaymentSheet(data: ReadableMap?, promise: Promise) {
+    promise.reject("E_NOT_IMPLEMENTED", "Apple Pay is not available on Android")
+  }
+
+  override fun updateShippingMethods(shippingMethods: ReadableArray?) {
+    // No-op
+  }
+
+  override fun updateSummaryItems(summaryItems: ReadableArray?) {
+    // No-op
+  }
+
+  override fun confirmPayment() {
+    // No-op
+  }
+
+  override fun rejectPayment() {
+    // No-op
   }
 
   companion object {

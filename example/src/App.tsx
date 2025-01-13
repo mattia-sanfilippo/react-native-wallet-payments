@@ -1,20 +1,141 @@
-import { Text, View, StyleSheet } from 'react-native';
-import { multiply } from 'react-native-wallet-payments';
+import { useCallback } from 'react';
+import { Alert, View, StyleSheet } from 'react-native';
+import {
+  ApplePayButton,
+  updateShippingMethods,
+  updateSummaryItems,
+  useApplePay,
+  type Contact,
+  type ShippingMethod,
+} from 'react-native-wallet-payments';
 
-const result = multiply(3, 7);
+const App = () => {
+  const onShippingContactSelected = useCallback((contact: Contact) => {
+    if (contact.postalAddress.isoCountryCode === 'PL') {
+      updateShippingMethods([
+        {
+          label: 'Poland Standard Shipping',
+          amount: '10.00',
+          identifier: 'standard',
+          detail: 'Delivers in 5-7 business days',
+        },
+        {
+          label: 'Poland Express Shipping',
+          amount: '20.00',
+          identifier: 'express',
+          detail: 'Delivers in 2-3 business days',
+        },
+      ]);
+    }
 
-export default function App() {
+    if (contact.postalAddress.isoCountryCode === 'IT') {
+      updateShippingMethods([
+        {
+          label: 'Italy Standard Shipping',
+          amount: '15.00',
+          identifier: 'standard',
+          detail: 'Delivers in 5-7 business days',
+        },
+        {
+          label: 'Italy Express Shipping',
+          amount: '25.00',
+          identifier: 'express',
+          detail: 'Delivers in 2-3 business days',
+        },
+      ]);
+    }
+  }, []);
+
+  const onShippingMethodSelected = useCallback((method: ShippingMethod) => {
+    updateSummaryItems([
+      { label: 'Product 1', amount: '10.00' },
+      { label: 'Product 2', amount: '5.00' },
+      { label: 'Shipping', amount: method.amount },
+      {
+        label: 'Total',
+        amount: (15 + parseFloat(method.amount)).toFixed(2),
+      },
+    ]);
+  }, []);
+
+  const { startPayment, confirmPayment } = useApplePay(
+    onShippingContactSelected,
+    onShippingMethodSelected
+  );
+
+  const handleApplePay = async () => {
+    try {
+      const result = await startPayment({
+        merchantId: 'merchant.example.wallet-payments',
+        countryCode: 'IT',
+        currencyCode: 'EUR',
+        supportedNetworks: ['visa', 'masterCard'],
+        merchantCapabilities: ['3DS'],
+        items: [
+          { label: 'Product 1', amount: '10.00' },
+          { label: 'Product 2', amount: '5.00' },
+          { label: 'Total', amount: '15.00' },
+        ],
+        requiredShippingContactFields: [
+          'name',
+          'postalAddress',
+          'emailAddress',
+          'phoneNumber',
+        ],
+        requiredBillingContactFields: [
+          'name',
+          'emailAddress',
+          'postalAddress',
+          'phoneNumber',
+        ],
+        shippingMethods: [
+          {
+            label: 'Standard Shipping',
+            amount: '5.00',
+            identifier: 'standard',
+            detail: 'Delivers in 5-7 business days',
+          },
+          {
+            label: 'Express Shipping',
+            amount: '10.00',
+            identifier: 'express',
+            detail: 'Delivers in 2-3 business days',
+          },
+        ],
+      });
+
+      console.log(result);
+
+      confirmPayment();
+    } catch (error) {
+      Alert.alert('Payment Failed');
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <ApplePayButton
+        onPress={handleApplePay}
+        style={styles.applePayButton}
+        buttonType="buy"
+        buttonStyle="automatic"
+        cornerRadius={4}
+      />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  applePayButton: {
+    width: 200,
+    height: 50,
   },
 });
+
+export default App;
