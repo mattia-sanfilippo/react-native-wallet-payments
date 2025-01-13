@@ -4,7 +4,7 @@
 [![npm version](https://badge.fury.io/js/react-native-wallet-payments.svg)](https://badge.fury.io/js)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A powerful React Native library that provides a **customizable Apple Pay button** and full **Apple Pay integration** on iOS. The goal is to offer a **unified library** for handling multiple wallet-based payment systems, including **Google Pay** and **Samsung Pay**, in future versions.
+A powerful React Native library that provides full **Apple Pay integration** on iOS and a **customizable Apple Pay button**. The goal is to offer a **unified library** for handling multiple wallet-based payment systems, including **Google Pay** and **Samsung Pay**, in future versions.
 
 ---
 
@@ -49,20 +49,34 @@ const { startPayment, confirmPayment, rejectPayment } = useApplePay();
 const handleApplePay = async () => {
   try {
     const paymentRequest = {
-      merchantIdentifier: 'merchant.com.example',
-      supportedNetworks: ['visa', 'masterCard'],
+      merchantId: 'merchant.com.example',
+      supportedNetworks: ['visa', 'masterCard', 'amex'],
+      merchantCapabilities: ['3DS'],
       countryCode: 'US',
       currencyCode: 'USD',
-      paymentSummaryItems: [
+      items: [
         {
           label: 'Item 1',
-          amount: '1.00',
+          amount: '10.00',
         },
         {
-          label: 'Item 2',
-          amount: '2.00',
+          label: 'Total',
+          amount: '10.00',
         },
       ],
+      shippingMethods: [
+        {
+          identifier: 'standard',
+          label: 'Standard Shipping',
+          amount: '0.00',
+        },
+        {
+          identifier: 'express',
+          label: 'Express Shipping',
+          amount: '5.00',
+        },
+      ],
+      requiredShippingContactFields: ['postalAddress', 'email', 'phone'],
     };
 
     const paymentResponse = await startPayment(paymentRequest);
@@ -88,8 +102,9 @@ return (
 
 ```
 
+## Example App
 
-
+Check out the [example app](example) for a complete demonstration of the library's features.
 
 ## Contributing
 
