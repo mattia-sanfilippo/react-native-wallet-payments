@@ -1,6 +1,9 @@
 package com.walletpayments
 
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReadableArray
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 
 @ReactModule(name = WalletPaymentsModule.NAME)
