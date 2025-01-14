@@ -10,4 +10,4 @@ export interface Spec extends TurboModule {
   rejectPayment(): void;
 }
 
-export default TurboModuleRegistry.getEnforcing<Spec>('WalletPayments');
+export default TurboModuleRegistry.get<Spec>('WalletPayments');

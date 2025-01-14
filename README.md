@@ -37,7 +37,6 @@ pod install
 
 See the [Apple Pay documentation](https://developer.apple.com/documentation/passkit/setting-up-apple-pay) for more information.
 
-
 ## Usage
 
 ### Apple Pay
@@ -84,7 +83,7 @@ const handleApplePay = async () => {
     // Do any additional processing before confirming the payment
 
     // Confirm the payment to complete the transaction and show a success message on the Payment Sheet
-    confirmPayment(paymentResponse.paymentData);
+    confirmPayment();
   } catch (error) {
     // Handle errors by showing an error on the Payment Sheet and rejecting the payment
     rejectPayment();

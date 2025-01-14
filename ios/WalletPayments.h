@@ -1,8 +1,19 @@
-
 #import <PassKit/PassKit.h>
+
+#ifdef RCT_NEW_ARCH_ENABLED
 #import "generated/RNWalletPaymentsSpec/RNWalletPaymentsSpec.h"
 
+// New Architecture Interface
 @interface WalletPayments : NSObject <NativeWalletPaymentsSpec, PKPaymentAuthorizationControllerDelegate>
+
+#else
+
+#import <React/RCTBridgeModule.h>
+
+// Old Architecture Interface
+@interface WalletPayments : NSObject <RCTBridgeModule, PKPaymentAuthorizationControllerDelegate>
+
+#endif
 
 @property (nonatomic, copy) RCTPromiseResolveBlock _Nullable resolveBlock;
 @property (nonatomic, copy) RCTPromiseRejectBlock _Nullable rejectBlock;
