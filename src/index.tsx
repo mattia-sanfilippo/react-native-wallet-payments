@@ -1,4 +1,4 @@
-import WalletPayments from './NativeWalletPayments';
+import NativeWalletPayments from './NativeWalletPayments';
 
 export { useApplePay } from './useApplePay';
 export { default as ApplePayButton } from './ApplePayButton';
@@ -125,13 +125,20 @@ export type PaymentResult = {
   shippingMethod?: ShippingMethod;
 };
 
+// @ts-expect-error This applies the turbo module version only when turbo is enabled for backwards compatibility.
+const isTurboModuleEnabled = global?.__turboModuleProxy != null;
+
+const WalletPaymentsModule = isTurboModuleEnabled
+  ? require('./NativeWalletPayments').default
+  : NativeWalletPayments;
+
 /**
  * canMakePayments
  * This function checks if the device supports Apple Pay and if the user has any cards added.
  * @returns {Promise<boolean>} - A promise that resolves with a boolean value.
  */
 export function canMakePayments(): Promise<boolean> {
-  return WalletPayments.canMakePayments();
+  return WalletPaymentsModule.canMakePayments();
 }
 
 /**
@@ -141,7 +148,7 @@ export function canMakePayments(): Promise<boolean> {
  * @returns {Promise<PaymentResult>} - A promise that resolves with the payment result.
  */
 export function showPaymentSheet(data: PaymentRequest): Promise<string> {
-  return WalletPayments.showPaymentSheet(data);
+  return WalletPaymentsModule.showPaymentSheet(data);
 }
 
 /**
@@ -153,7 +160,7 @@ export function showPaymentSheet(data: PaymentRequest): Promise<string> {
 export function updateShippingMethods(
   shippingMethods: Array<ShippingMethod>
 ): void {
-  WalletPayments.updateShippingMethods(shippingMethods);
+  WalletPaymentsModule.updateShippingMethods(shippingMethods);
 }
 
 /**
@@ -163,7 +170,7 @@ export function updateShippingMethods(
  * from the event listener.
  */
 export function updateSummaryItems(summaryItems: Array<SummaryItem>): void {
-  WalletPayments.updateSummaryItems(summaryItems);
+  WalletPaymentsModule.updateSummaryItems(summaryItems);
 }
 
 /**
@@ -172,7 +179,7 @@ export function updateSummaryItems(summaryItems: Array<SummaryItem>): void {
  * if the function is not called, the Apple Pay sheet will remain open and it will go into a timeout state (handled by Apple's internal logic).
  */
 export function confirmPayment(): void {
-  WalletPayments.confirmPayment();
+  WalletPaymentsModule.confirmPayment();
 }
 
 /**
@@ -180,5 +187,5 @@ export function confirmPayment(): void {
  * This function rejects the payment.
  */
 export function rejectPayment(): void {
-  WalletPayments.rejectPayment();
+  WalletPaymentsModule.rejectPayment();
 }

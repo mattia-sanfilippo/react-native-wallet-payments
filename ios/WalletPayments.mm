@@ -5,22 +5,15 @@
 
 RCT_EXPORT_MODULE()
 
-- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
-{
-    return std::make_shared<facebook::react::NativeWalletPaymentsSpecJSI>(params);
-}
-
-
-- (void)canMakePayments:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject
+RCT_EXPORT_METHOD(canMakePayments:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 {
     resolve(@([PKPaymentAuthorizationController canMakePayments]));
 }
 
-- (void)showPaymentSheet:(NSDictionary *)data
+RCT_EXPORT_METHOD(showPaymentSheet:(NSDictionary *)data
                           resolve:(RCTPromiseResolveBlock)resolve
-                          reject:(RCTPromiseRejectBlock)reject
+                          reject:(RCTPromiseRejectBlock)reject)
 {
 
 
@@ -148,7 +141,7 @@ RCT_EXPORT_MODULE()
     }];
 }
 
-- (void)updateShippingMethods:(NSArray *)shippingMethods
+RCT_EXPORT_METHOD(updateShippingMethods:(NSArray *)shippingMethods)
 {
     NSMutableArray<PKShippingMethod *> *updatedMethods = [NSMutableArray new];
 
@@ -172,7 +165,7 @@ RCT_EXPORT_MODULE()
     }
 }
 
-- (void)updateSummaryItems:(NSArray *)summaryItems
+RCT_EXPORT_METHOD(updateSummaryItems:(NSArray *)summaryItems)
 {
     NSMutableArray<PKPaymentSummaryItem *> *updatedItems = [NSMutableArray new];
 
@@ -191,7 +184,7 @@ RCT_EXPORT_MODULE()
     }
 }
 
-- (void)confirmPayment
+RCT_EXPORT_METHOD(confirmPayment)
 {
   
   NSLog(@"Confirming payment");
@@ -471,5 +464,13 @@ RCT_EXPORT_MODULE()
 
     return merchantCapabilities;
 }
+
+#ifdef RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params
+{
+    return std::make_shared<facebook::react::NativeWalletPaymentsSpecJSI>(params);
+}
+#endif
 
 @end
