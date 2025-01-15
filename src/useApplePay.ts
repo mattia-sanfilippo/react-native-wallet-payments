@@ -16,8 +16,8 @@ const applePayEmitter = new NativeEventEmitter(
 );
 
 export const useApplePay = (
-  onShippingContactSelected: (contact: Contact) => void,
-  onShippingMethodSelected: (method: ShippingMethod) => void
+  onShippingContactSelected?: (contact: Contact) => void,
+  onShippingMethodSelected?: (method: ShippingMethod) => void
 ) => {
   const subscriptions = useRef<any[]>([]);
 
@@ -25,14 +25,14 @@ export const useApplePay = (
     const contactSubscription = applePayEmitter.addListener(
       'onShippingContactSelected',
       (contact) => {
-        onShippingContactSelected(contact);
+        onShippingContactSelected?.(contact);
       }
     );
 
     const methodSubscription = applePayEmitter.addListener(
       'onShippingMethodSelected',
       (method) => {
-        onShippingMethodSelected(method);
+        onShippingMethodSelected?.(method);
       }
     );
 
