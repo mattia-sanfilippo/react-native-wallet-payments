@@ -5,6 +5,11 @@
 
 RCT_EXPORT_MODULE()
 
+- (dispatch_queue_t)methodQueue
+{
+    return dispatch_get_main_queue();
+}
+
 RCT_EXPORT_METHOD(canMakePayments:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 {
@@ -87,9 +92,11 @@ RCT_EXPORT_METHOD(showPaymentSheet:(NSDictionary *)data
             [shippingMethods addObject:shippingMethod];
         }
         paymentRequest.shippingMethods = shippingMethods;
+    } else {
+        paymentRequest.shippingMethods = nil;
     }
 
-    self.cachedShippingMethods = paymentRequest.shippingMethods ?: @[];
+    self.cachedShippingMethods = paymentRequest.shippingMethods;
 
     NSDictionary<NSString *, PKContactField> *contactFieldMapping = @{
         @"name": PKContactFieldName,
@@ -155,14 +162,23 @@ RCT_EXPORT_METHOD(updateShippingMethods:(NSArray *)shippingMethods)
     }
 
     self.cachedShippingMethods = updatedMethods;
-
-    if (self.pendingShippingContactCompletion) {
-        PKPaymentRequestShippingContactUpdate *update = [[PKPaymentRequestShippingContactUpdate alloc] initWithErrors:nil
-                                                                                                 paymentSummaryItems:self.cachedSummaryItems
-                                                                                                    shippingMethods:self.cachedShippingMethods];
-        self.pendingShippingContactCompletion(update);
-        self.pendingShippingContactCompletion = nil;
+  
+  if (self.pendingShippingContactCompletion) {
+    PKPaymentRequestShippingContactUpdate *update;
+    
+    NSLog(@"Updating shipping methods");
+    
+    if (updatedMethods.count == 0) {
+      NSError *error = [PKPaymentRequest paymentShippingAddressUnserviceableErrorWithLocalizedDescription:@"Shipping is not available for the selected address."];
+      update = [[PKPaymentRequestShippingContactUpdate alloc] initWithErrors:@[error] paymentSummaryItems:self.cachedSummaryItems shippingMethods:updatedMethods];
+    } else {
+      update = [[PKPaymentRequestShippingContactUpdate alloc] initWithErrors:nil
+                                                         paymentSummaryItems:self.cachedSummaryItems shippingMethods:updatedMethods];
     }
+    
+    self.pendingShippingContactCompletion(update);
+    self.pendingShippingContactCompletion = nil;
+  }
 }
 
 RCT_EXPORT_METHOD(updateSummaryItems:(NSArray *)summaryItems)
@@ -195,14 +211,18 @@ RCT_EXPORT_METHOD(confirmPayment)
     PKPaymentAuthorizationResult *result = [[PKPaymentAuthorizationResult alloc] initWithStatus:status errors:nil];
     self.pendingPaymentAuthorizationCompletion(result);
     
-    // Clear the completion handler
+    // Clear the completion handlers
     self.pendingPaymentAuthorizationCompletion = nil;
+    self.pendingShippingContactCompletion = nil;
+    self.pendingShippingMethodCompletion = nil;
+    self.cachedSummaryItems = nil;
+    self.cachedShippingMethods = nil;
   } else {
     NSLog(@"No pending completion handler found for confirming payment");
   }
 }
 
-- (void)rejectPayment
+RCT_EXPORT_METHOD(rejectPayment)
 {
   if (self.pendingPaymentAuthorizationCompletion) {
     NSLog(@"Rejecting payment");
@@ -211,8 +231,12 @@ RCT_EXPORT_METHOD(confirmPayment)
     
     self.pendingPaymentAuthorizationCompletion(result);
     
-    // Clear the completion handler
+    // Clear the completion handlers
     self.pendingPaymentAuthorizationCompletion = nil;
+    self.pendingShippingContactCompletion = nil;
+    self.pendingShippingMethodCompletion = nil;
+    self.cachedSummaryItems = nil;
+    self.cachedShippingMethods = nil;
     
   } else {
     NSLog(@"No pending completion handler found for rejecting payment");
@@ -316,6 +340,11 @@ RCT_EXPORT_METHOD(confirmPayment)
 {
     NSLog(@"Payment controller finished");
     [controller dismissWithCompletion:nil];
+  
+    self.pendingPaymentAuthorizationCompletion = nil;
+    self.pendingShippingContactCompletion = nil;
+    self.cachedSummaryItems = nil;
+    self.cachedShippingMethods = nil;
 
     // If the payment was not authorized, reject the promise
     if (self.resolveBlock) {
