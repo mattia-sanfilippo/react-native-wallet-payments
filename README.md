@@ -1,19 +1,24 @@
 # react-native-wallet-payments
 
 ![main workflow](https://github.com/mattia-sanfilippo/react-native-wallet-payments/actions/workflows/ci.yml/badge.svg)
-[![npm version](https://badge.fury.io/js/react-native-wallet-payments.svg)](https://badge.fury.io/js)
+[![npm version](https://badge.fury.io/js/react-native-wallet-payments.svg)](https://badge.fury.io/js/react-native-wallet-payments)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A powerful React Native library that provides full **Apple Pay integration** on iOS and a **customizable Apple Pay button**. The goal is to offer a **unified library** for handling multiple wallet-based payment systems, including **Google Pay** and **Samsung Pay**, in future versions.
 
 ---
 
-## **Features**
+## Features
 
-- **Full Apple Pay support** on iOS.
-- **Customizable Apple Pay button** with support for all button types and styles.
-- Dynamic shipping options and summary items update during the payment process.
-- **Future Support** planned for **Google Pay** and **Samsung Pay** on Android.
+- **Apple Pay** integration on iOS:
+  - **Customizable Apple Pay button** with support for all [button types and styles](https://developer.apple.com/design/human-interface-guidelines/apple-pay#Button-types).
+  - Dynamic shipping options and summary items update during the payment process from the React Native side.
+  - [Localized error handling](https://developer.apple.com/design/human-interface-guidelines/apple-pay#Button-types) to validate the shipping address and shipping methods.
+
+## Upcoming Features
+
+- **Google Pay** integration on Android.
+- **Samsung Pay** integration on Android.
 
 ---
 
