@@ -13,7 +13,7 @@ A powerful React Native library that provides full **Apple Pay integration** on 
 - **Apple Pay** integration on iOS:
   - **Customizable Apple Pay button** with support for all [button types and styles](https://developer.apple.com/design/human-interface-guidelines/apple-pay#Button-types).
   - Dynamic shipping options and summary items update during the payment process from the React Native side.
-  - [Localized error handling](https://developer.apple.com/design/human-interface-guidelines/apple-pay#Button-types) to validate the shipping address and shipping methods.
+  - [Localized error handling](https://developer.apple.com/design/human-interface-guidelines/apple-pay#Data-validation) to validate the shipping address and shipping methods.
 
 ## Upcoming Features
 
