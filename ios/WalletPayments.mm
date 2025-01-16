@@ -50,7 +50,8 @@ RCT_EXPORT_METHOD(showPaymentSheet:(NSDictionary *)data
     for (NSDictionary *item in items) {
         NSString *label = item[@"label"];
         NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:item[@"amount"]];
-        [paymentSummaryItems addObject:[PKPaymentSummaryItem summaryItemWithLabel:label amount:amount]];
+        PKPaymentSummaryItemType type = [self mapSummaryItemType:item[@"type"]];
+        [paymentSummaryItems addObject:[PKPaymentSummaryItem summaryItemWithLabel:label amount:amount type:type]];
     }
 
     self.cachedSummaryItems = paymentSummaryItems;
@@ -566,6 +567,22 @@ RCT_EXPORT_METHOD(rejectPayment:(RCTPromiseResolveBlock) resolve
     return contact;
 }
 
+- (PKPaymentSummaryItemType)mapSummaryItemType:(NSString *)type {
+    NSDictionary<NSString *, NSNumber *> *typeMap = @{
+        @"final": @(PKPaymentSummaryItemTypeFinal),
+        @"pending": @(PKPaymentSummaryItemTypePending),
+    };
+    
+    NSNumber *mappedType = typeMap[type];
+    
+    // Default to PKPaymentSummaryItemTypeFinal if the key is not found
+    if (mappedType != nil) {
+        return (PKPaymentSummaryItemType)mappedType.integerValue;
+    } else {
+        NSLog(@"Warning: Unsupported summary item type '%@'. Defaulting to 'final'.", type);
+        return PKPaymentSummaryItemTypeFinal;
+    }
+}
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
