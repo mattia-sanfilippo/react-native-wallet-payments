@@ -68,6 +68,19 @@ RCT_EXPORT_METHOD(showPaymentSheet:(NSDictionary *)data
         paymentRequest.supportedCountries = [[NSSet alloc] initWithArray:supportedCountries];
     }
   
+    // Optional: Prefill billing contact address if provided. Default is nil.
+    if (data[@"billingContact"]) {
+      PKContact *billingContact = [self mapContactFromData:data[@"billingContact"]];
+      paymentRequest.billingContact = billingContact;
+    }
+  
+    // Optional: Prefill shipping contact address if provided. Default is nil.
+    if (data[@"shippingContact"]) {
+      PKContact *shippingContact = [self mapContactFromData:data[@"shippingContact"]];
+      paymentRequest.shippingContact = shippingContact;
+    }
+  
+    // Optional: Handle shipping type if provided. Default is PKShippingTypeShipping.
     NSDictionary<NSString *, NSNumber *> *shippingTypeMap = @{
       @"delivery": @(PKShippingTypeDelivery),
       @"servicePickup": @(PKShippingTypeServicePickup),
@@ -75,7 +88,6 @@ RCT_EXPORT_METHOD(showPaymentSheet:(NSDictionary *)data
       @"shipping": @(PKShippingTypeShipping)
     };
   
-    // Optional: Handle shipping type if provided. Default is PKShippingTypeShipping.
     if (shippingType && shippingTypeMap[shippingType]) {
       paymentRequest.shippingType = (PKShippingType)[shippingTypeMap[shippingType] integerValue];
     }
@@ -493,6 +505,60 @@ RCT_EXPORT_METHOD(rejectPayment)
 
     return merchantCapabilities;
 }
+
+- (PKContact *)mapContactFromData:(NSDictionary *)contactData {
+    PKContact *contact = [[PKContact alloc] init];
+
+    // Map name
+    NSDictionary *nameData = contactData[@"name"];
+    if (nameData) {
+        NSPersonNameComponents *nameComponents = [[NSPersonNameComponents alloc] init];
+        nameComponents.givenName = nameData[@"givenName"];
+        nameComponents.familyName = nameData[@"familyName"];
+        nameComponents.middleName = nameData[@"middleName"];
+        nameComponents.namePrefix = nameData[@"namePrefix"];
+        nameComponents.nameSuffix = nameData[@"nameSuffix"];
+        nameComponents.nickname = nameData[@"nickname"];
+
+        NSDictionary *phoneticRepresentation = nameData[@"phoneticRepresentation"];
+        if (phoneticRepresentation) {
+            NSPersonNameComponents *phoneticComponents = [[NSPersonNameComponents alloc] init];
+            phoneticComponents.givenName = phoneticRepresentation[@"givenName"];
+            phoneticComponents.familyName = phoneticRepresentation[@"familyName"];
+            phoneticComponents.middleName = phoneticRepresentation[@"middleName"];
+            nameComponents.phoneticRepresentation = phoneticComponents;
+        }
+
+        contact.name = nameComponents;
+    }
+
+    // Map postal address
+    NSDictionary *postalAddressData = contactData[@"postalAddress"];
+    if (postalAddressData) {
+        CNMutablePostalAddress *postalAddress = [[CNMutablePostalAddress alloc] init];
+        postalAddress.street = postalAddressData[@"street"];
+        postalAddress.city = postalAddressData[@"city"];
+        postalAddress.state = postalAddressData[@"state"];
+        postalAddress.postalCode = postalAddressData[@"postalCode"];
+        postalAddress.country = postalAddressData[@"country"];
+        postalAddress.ISOCountryCode = postalAddressData[@"isoCountryCode"];
+        postalAddress.subAdministrativeArea = postalAddressData[@"subAdministrativeArea"];
+        postalAddress.subLocality = postalAddressData[@"subLocality"];
+        contact.postalAddress = postalAddress;
+    }
+
+    // Map email address
+    contact.emailAddress = contactData[@"emailAddress"];
+
+    // Map phone number
+    NSString *phoneNumber = contactData[@"phoneNumber"];
+    if (phoneNumber) {
+        contact.phoneNumber = [[CNPhoneNumber alloc] initWithStringValue:phoneNumber];
+    }
+
+    return contact;
+}
+
 
 #ifdef RCT_NEW_ARCH_ENABLED
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
