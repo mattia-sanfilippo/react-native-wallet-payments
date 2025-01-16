@@ -28,12 +28,12 @@ class WalletPaymentsModule(reactContext: ReactApplicationContext) : NativeWallet
         implementation.updateSummaryItems(summaryItems)
     }
 
-    override fun confirmPayment() {
-        implementation.confirmPayment()
+    override fun confirmPayment(promise: Promise) {
+        implementation.confirmPayment(promise)
     }
 
-    override fun rejectPayment() {
-        implementation.rejectPayment()
+    override fun rejectPayment(promise: Promise) {
+        implementation.rejectPayment(promise)
     }
 
     companion object {

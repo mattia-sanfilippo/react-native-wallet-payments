@@ -81,12 +81,12 @@ export const useApplePay = (
     });
   };
 
-  const confirmPayment = useCallback(() => {
-    confirmPaymentNative();
+  const confirmPayment = useCallback(async () => {
+    await confirmPaymentNative();
   }, []);
 
-  const rejectPayment = useCallback(() => {
-    rejectPaymentNative();
+  const rejectPayment = useCallback(async () => {
+    await rejectPaymentNative();
   }, []);
 
   return {

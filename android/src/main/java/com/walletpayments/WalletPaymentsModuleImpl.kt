@@ -21,12 +21,12 @@ class WalletPaymentsModuleImpl {
         // No-op
     }
 
-    fun confirmPayment() {
-        // No-op
+    fun confirmPayment(promise: Promise) {
+        promise.reject("E_NOT_IMPLEMENTED", "Apple Pay is not available on Android")
     }
 
-    fun rejectPayment() {
-        // No-op
+    fun rejectPayment(promise: Promise) {
+        promise.reject("E_NOT_IMPLEMENTED", "Apple Pay is not available on Android")
     }
 
     companion object {

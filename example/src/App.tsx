@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { Alert, View, StyleSheet } from 'react-native';
 import {
   ApplePayButton,
+  confirmPayment,
   updateShippingMethods,
   updateSummaryItems,
   useApplePay,
@@ -58,7 +59,7 @@ const App = () => {
     ]);
   }, []);
 
-  const { startPayment, confirmPayment } = useApplePay(
+  const { startPayment } = useApplePay(
     onShippingContactSelected,
     onShippingMethodSelected
   );
@@ -138,7 +139,9 @@ const App = () => {
 
       console.log(result);
 
-      confirmPayment();
+      await confirmPayment();
+
+      Alert.alert('Payment Successful');
     } catch (error) {
       Alert.alert('Payment Failed');
     }

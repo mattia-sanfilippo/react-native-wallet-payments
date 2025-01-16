@@ -212,14 +212,14 @@ RCT_EXPORT_METHOD(updateSummaryItems:(NSArray *)summaryItems)
     }
 }
 
-RCT_EXPORT_METHOD(confirmPayment)
+RCT_EXPORT_METHOD(confirmPayment:(RCTPromiseResolveBlock) resolve
+                reject:(RCTPromiseRejectBlock) reject)
 {
   
   NSLog(@"Confirming payment");
   
   if (self.pendingPaymentAuthorizationCompletion) {
     PKPaymentAuthorizationStatus status = PKPaymentAuthorizationStatusSuccess;
-    
     PKPaymentAuthorizationResult *result = [[PKPaymentAuthorizationResult alloc] initWithStatus:status errors:nil];
     self.pendingPaymentAuthorizationCompletion(result);
     
@@ -229,12 +229,16 @@ RCT_EXPORT_METHOD(confirmPayment)
     self.pendingShippingMethodCompletion = nil;
     self.cachedSummaryItems = nil;
     self.cachedShippingMethods = nil;
+
+    resolve(@(YES));
   } else {
     NSLog(@"No pending completion handler found for confirming payment");
+    reject(@"E_CONFIRMATION_FAILED", @"No pending completion handler found for confirming payment", nil);
   }
 }
 
-RCT_EXPORT_METHOD(rejectPayment)
+RCT_EXPORT_METHOD(rejectPayment:(RCTPromiseResolveBlock) resolve
+                reject:(RCTPromiseRejectBlock) reject)
 {
   if (self.pendingPaymentAuthorizationCompletion) {
     NSLog(@"Rejecting payment");
@@ -249,9 +253,12 @@ RCT_EXPORT_METHOD(rejectPayment)
     self.pendingShippingMethodCompletion = nil;
     self.cachedSummaryItems = nil;
     self.cachedShippingMethods = nil;
+
+    resolve(@(YES));
     
   } else {
     NSLog(@"No pending completion handler found for rejecting payment");
+    reject(@"E_REJECTION_FAILED", @"No pending completion handler found for rejecting payment", nil);
   }
 }
 
