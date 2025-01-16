@@ -3,9 +3,12 @@ import NativeWalletPayments from './NativeWalletPayments';
 export { useApplePay } from './useApplePay';
 export { default as ApplePayButton } from './ApplePayButton';
 
+export type SummaryItemType = 'final' | 'pending';
+
 export type SummaryItem = {
   label: string;
   amount: string;
+  type?: SummaryItemType;
 };
 
 export type ContactField =
