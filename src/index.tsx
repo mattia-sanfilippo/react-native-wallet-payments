@@ -76,34 +76,40 @@ export type PaymentRequest = {
   shippingType?: ShippingType;
   requiredBillingContactFields?: Array<ContactField>;
   requiredShippingContactFields?: Array<ContactField>;
+  billingContact?: Contact;
+  shippingContact?: Contact;
+};
+
+export type PostalAddress = {
+  street?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  isoCountryCode?: string;
+  subAdministrativeArea?: string;
+  subLocality?: string;
+};
+
+export type Name = {
+  givenName?: string;
+  middleName?: string;
+  familyName?: string;
+  namePrefix?: string;
+  nameSuffix?: string;
+  nickname?: string;
+  phoneticRepresentation?: {
+    givenName?: string;
+    middleName?: string;
+    familyName?: string;
+  };
 };
 
 export type Contact = {
-  postalAddress: {
-    street: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    subLocality: string;
-    subAdministrativeArea: string;
-    country: string;
-    isoCountryCode: string;
-  };
-  emailAddress: string;
-  phoneNumber: string;
-  name: {
-    familyName: string;
-    middleName: string;
-    givenName: string;
-    namePrefix: string;
-    nameSuffix: string;
-    nickname: string;
-    phoneticRepresentation: {
-      familyName: string;
-      middleName: string;
-      givenName: string;
-    };
-  };
+  postalAddress?: PostalAddress;
+  emailAddress?: string;
+  phoneNumber?: string;
+  name?: Name;
 };
 
 export type ShippingMethod = {
@@ -120,8 +126,8 @@ export type PaymentResult = {
     displayName: string;
     network: string;
   };
-  billingContact?: Partial<Contact>;
-  shippingContact?: Partial<Contact>;
+  billingContact?: Contact;
+  shippingContact?: Contact;
   shippingMethod?: ShippingMethod;
 };
 

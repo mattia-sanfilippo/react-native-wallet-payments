@@ -11,7 +11,7 @@ import {
 
 const App = () => {
   const onShippingContactSelected = useCallback((contact: Contact) => {
-    if (contact.postalAddress.isoCountryCode === 'PL') {
+    if (contact?.postalAddress?.isoCountryCode === 'PL') {
       updateShippingMethods([
         {
           label: 'Poland Standard Shipping',
@@ -28,7 +28,7 @@ const App = () => {
       ]);
     }
 
-    if (contact.postalAddress.isoCountryCode === 'IT') {
+    if (contact?.postalAddress?.isoCountryCode === 'IT') {
       updateShippingMethods([
         {
           label: 'Italy Standard Shipping',
@@ -76,6 +76,38 @@ const App = () => {
           { label: 'Product 2', amount: '5.00' },
           { label: 'Total', amount: '15.00' },
         ],
+        billingContact: {
+          name: {
+            givenName: 'John',
+            familyName: 'Doe',
+          },
+          postalAddress: {
+            street: 'Via Roma 156',
+            city: 'Rome',
+            state: 'RM',
+            postalCode: '00100',
+            country: 'Italy',
+            isoCountryCode: 'IT',
+          },
+          phoneNumber: '+39 333 1234567',
+          emailAddress: 'test@johndoe.com',
+        },
+        shippingContact: {
+          name: {
+            givenName: 'John',
+            familyName: 'Doe',
+          },
+          postalAddress: {
+            street: 'Via Roma 145',
+            city: 'Rome',
+            state: 'RM',
+            postalCode: '00100',
+            country: 'Italy',
+            isoCountryCode: 'IT',
+          },
+          phoneNumber: '+39 333 1234567',
+          emailAddress: 'test@johndoe.com',
+        },
         requiredShippingContactFields: [
           'name',
           'postalAddress',
