@@ -35,13 +35,13 @@ class WalletPaymentsModule(context: ReactApplicationContext) : ReactContextBaseJ
     }
 
     @ReactMethod
-    fun confirmPayment() {
-        implementation.confirmPayment()
+    fun confirmPayment(promise: Promise) {
+        implementation.confirmPayment(promise)
     }
 
     @ReactMethod
-    fun rejectPayment() {
-        implementation.rejectPayment()
+    fun rejectPayment(promise: Promise) {
+        implementation.rejectPayment(promise)
     }
 
     companion object {

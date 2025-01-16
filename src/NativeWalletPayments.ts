@@ -6,8 +6,8 @@ export interface Spec extends TurboModule {
   showPaymentSheet(data: Object): Promise<string>;
   updateShippingMethods(shippingMethods: Array<Object>): void;
   updateSummaryItems(summaryItems: Array<Object>): void;
-  confirmPayment(): void;
-  rejectPayment(): void;
+  confirmPayment(): Promise<boolean>;
+  rejectPayment(): Promise<boolean>;
 }
 
 export default TurboModuleRegistry.get<Spec>('WalletPayments');

@@ -184,14 +184,14 @@ export function updateSummaryItems(summaryItems: Array<SummaryItem>): void {
  * This function confirms the payment with the provided status and errors and closes the Apple Pay sheet.
  * if the function is not called, the Apple Pay sheet will remain open and it will go into a timeout state (handled by Apple's internal logic).
  */
-export function confirmPayment(): void {
-  WalletPaymentsModule.confirmPayment();
+export function confirmPayment(): Promise<boolean> {
+  return WalletPaymentsModule.confirmPayment();
 }
 
 /**
  * rejectPayment
  * This function rejects the payment.
  */
-export function rejectPayment(): void {
-  WalletPaymentsModule.rejectPayment();
+export function rejectPayment(): Promise<boolean> {
+  return WalletPaymentsModule.rejectPayment();
 }
